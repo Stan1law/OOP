@@ -1,5 +1,3 @@
-# Modern Hotel Reservation Solutions Using Python and Object-Oriented Programming
-
 import csv
 import datetime
 import uuid
@@ -65,7 +63,7 @@ class Hotel:
 
     def find_available_room(self, room_type):
         for room in self.rooms:
-            if room.room_type == room_type and room.is_available:
+            if room.room_type.lower() == room_type.lower() and room.is_available:
                 return room
         return None
 
@@ -77,6 +75,15 @@ class Hotel:
                 print(room)
         else:
             print("No rooms available.")
+
+    def list_reservations(self):
+        if self.reservations:
+            print("\nCurrent Reservations:")
+            for reservation in self.reservations:
+                print(reservation)
+                print("-" * 40)
+        else:
+            print("No current reservations.")
 
     def make_reservation(self, guest, room_type, check_in_date, check_out_date):
         if check_in_date >= check_out_date:
@@ -97,6 +104,11 @@ class Hotel:
     def cancel_reservation(self, reservation_id):
         for reservation in self.reservations:
             if reservation.reservation_id == reservation_id:
+                confirm = input(f"Are you sure you want to cancel reservation {reservation_id}? (yes/no): ").lower()
+                if confirm != "yes":
+                    print("Cancellation aborted.")
+                    return
+
                 reservation.room.is_available = True
                 self.reservations.remove(reservation)
                 self.save_reservations_to_file()  # Save reservations to file
@@ -106,14 +118,12 @@ class Hotel:
 
     def __str__(self):
         return f"{self.name}, located at {self.address}"
-    
+
     def save_reservations_to_file(self, filename="reservations.csv"):
         """Save all reservations to a CSV file."""
         with open(filename, mode="w", newline="") as file:
             writer = csv.writer(file)
-            # Write header row
             writer.writerow(["Reservation ID", "Guest Name", "Room Number", "Room Type", "Check-in Date", "Check-out Date", "Total Cost"])
-            # Write reservation details
             for reservation in self.reservations:
                 writer.writerow([
                     reservation.reservation_id,
@@ -132,8 +142,7 @@ class Hotel:
             with open(filename, mode="r") as file:
                 reader = csv.DictReader(file)
                 for row in reader:
-                    # Recreate guest, room, and reservation objects
-                    guest = Guest(row["Guest Name"], "N/A")  
+                    guest = Guest(row["Guest Name"], "N/A")
                     room = self.find_available_room(row["Room Type"])
                     if room:
                         room.is_available = False
@@ -146,18 +155,18 @@ class Hotel:
             print(f"No existing reservation file found: {filename}.")
 
 
-
 def main():
     hotel = Hotel("Modern Hotel", "123 Main Street")
-    hotel.auto_add_rooms(10, 10, 10)  # Add 10 Singles, 10 Doubles, 10 Suites
-    hotel.load_reservations_from_file()  # Load existing reservations from file
+    hotel.auto_add_rooms(10, 10, 10)
+    hotel.load_reservations_from_file()
 
     while True:
         print("\nWelcome to Modern Hotel Reservation System")
         print("1. List Available Rooms")
         print("2. Make a Reservation")
         print("3. Cancel a Reservation")
-        print("4. Exit")
+        print("4. View Current Reservations")
+        print("5. Exit")
         choice = input("Enter your choice: ")
 
         if choice == "1":
@@ -167,20 +176,23 @@ def main():
             contact_info = input("Enter guest contact info: ")
             guest = Guest(name, contact_info)
 
-            room_type = input("Enter room type (Single/Double/Suite): ")
-            try:
-                today_year = datetime.date.today().year  # Get the current year
-                check_in_str = input("Enter check-in date (MM/DD): ")
-                check_out_str = input("Enter check-out date (MM/DD): ")
-
-                check_in_date = datetime.datetime.strptime(f"{today_year}/{check_in_str}", "%Y/%m/%d").date()
-                check_out_date = datetime.datetime.strptime(f"{today_year}/{check_out_str}", "%Y/%m/%d").date()
-            except ValueError:
-                print("Invalid date format. Please try again.")
+            valid_room_types = ["Single", "Double", "Suite"]
+            room_type_input = input("Enter room type (Single/Double/Suite): ").title()
+            if room_type_input not in valid_room_types:
+                print("Invalid room type. Please enter Single, Double, or Suite.")
                 continue
 
+            try:
+                check_in_str = input("Enter check-in date (MM/DD): ")
+                check_out_str = input("Enter check-out date (MM/DD): ")
+                current_year = datetime.date.today().year
+                check_in_date = datetime.datetime.strptime(f"{check_in_str}/{current_year}", "%m/%d/%Y").date()
+                check_out_date = datetime.datetime.strptime(f"{check_out_str}/{current_year}", "%m/%d/%Y").date()
+            except ValueError:
+                print("Invalid date format. Please use MM/DD.")
+                continue
 
-            reservation = hotel.make_reservation(guest, room_type, check_in_date, check_out_date)
+            reservation = hotel.make_reservation(guest, room_type_input, check_in_date, check_out_date)
             if reservation:
                 print("Reservation successful!")
                 print(reservation)
@@ -188,6 +200,8 @@ def main():
             reservation_id = input("Enter reservation ID to cancel: ")
             hotel.cancel_reservation(reservation_id)
         elif choice == "4":
+            hotel.list_reservations()
+        elif choice == "5":
             print("Thank you for using Modern Hotel Reservation System. Goodbye!")
             break
         else:
