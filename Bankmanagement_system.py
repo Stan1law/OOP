@@ -131,7 +131,7 @@ class BankManagementSystem:
                 else:
                     self.account_menu(account)
                 return
-        print("❌ Invalid credentials. Please try again.")
+        print("Invalid credentials. Please try again.")
 
     def account_menu(self, account):
         while True:
