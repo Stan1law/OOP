@@ -50,9 +50,9 @@ def main():
 
     age = int(input("\nEnter viewer's age: "))
     if movie.can_watch(age):
-        print("✅ Viewer is allowed to watch the movie.")
+        print("Viewer is allowed to watch the movie.")
     else:
-        print("❌ Viewer is NOT allowed to watch the movie due to age restrictions.")
+        print("Viewer is NOT allowed to watch the movie due to age restrictions.")
 
 
 if __name__ == "__main__":
