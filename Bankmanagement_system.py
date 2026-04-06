@@ -30,7 +30,7 @@ class Account:
 
         # Check if deposit is suspicious
         if amount > (previous_balance * 0.5):
-            print("🚨 Suspicious transaction detected: Deposit is more than 50% of previous balance.")
+            print("Suspicious transaction detected: Deposit is more than 50% of previous balance.")
             self.is_locked = True
 
     def withdraw(self, amount):
@@ -50,16 +50,16 @@ class Account:
 
         # Check if withdrawal is suspicious
         if self.balance == 102:
-            print("🚨 Suspicious transaction detected: Withdrawal leaves exactly 102 units in the account.")
+            print("Suspicious transaction detected: Withdrawal leaves exactly 102 units in the account.")
             self.is_locked = True
 
         if amount == 3 * self.last_deposit:
-            print("🚨 Suspicious transaction detected: Withdrawal is exactly three times the last deposit.")
+            print("Suspicious transaction detected: Withdrawal is exactly three times the last deposit.")
             self.is_locked = True
 
     def transfer(self, recipient, amount):
         if self.is_locked:
-            print("🚨 Account is locked. Cannot transfer funds.")
+            print("Account is locked. Cannot transfer funds.")
             return
         if amount <= 0:
             raise ValueError("Transfer amount must be positive.")
@@ -98,13 +98,13 @@ class BankManagementSystem:
         account_number = input("Enter Account Number (102XXX format): ")
 
         if not re.fullmatch(r"102\d{3}", account_number):
-            print("❌ Invalid account number. It must be in the format 102XXX where X is a digit.")
+            print("Invalid account number. It must be in the format 102XXX where X is a digit.")
             return
 
         balance = float(input("Enter Initial Balance: "))
         new_account = Account(username, password, account_number, balance)
         self.accounts.append(new_account)
-        print(f"✅ Account created successfully! Account Number: {account_number}")
+        print(f"Account created successfully! Account Number: {account_number}")
 
     def find_account(self, account_number):
         for account in self.accounts:
@@ -118,14 +118,14 @@ class BankManagementSystem:
             account.display_transaction_history()
 
     def login_menu(self):
-        print("\n🔐 Login Menu")
+        print("\nLogin Menu")
         username = input("Enter Username: ")
         password = input("Enter Password: ")
         account_number = input("Enter Account Number: ")
 
         for account in self.accounts:
             if account.username == username and account.password == password and account.account_number == account_number:
-                print("✅ Login successful!")
+                print("Login successful!")
                 if account.account_number == "102000" and account.username == "admin":
                     self.manager_menu()
                 else:
@@ -135,7 +135,7 @@ class BankManagementSystem:
 
     def account_menu(self, account):
         while True:
-            print("\n🏦 Account Menu")
+            print("\nAccount Menu")
             print("1. Deposit")
             print("2. Withdraw")
             print("3. Check Balance")
@@ -159,27 +159,27 @@ class BankManagementSystem:
                     amount = float(input("Enter amount to transfer: "))
                     account.transfer(recipient, amount)
                 else:
-                    print("❌ Recipient account not found.")
+                    print("Recipient account not found.")
             elif choice == "5":
                 account.display_transaction_history()
             elif choice == "6":
-                print("🔒 Logging out...")
+                print("Logging out...")
                 break
             else:
-                print("❌ Invalid choice. Please try again.")
+                print("Invalid choice. Please try again.")
 
     def unlock_account(self):
         account_number = input("Enter account number to unlock: ")
         account = self.find_account(account_number)
         if account and account.is_locked:
             account.is_locked = False
-            print(f"✅ Account {account_number} has been unlocked.")
+            print(f"Account {account_number} has been unlocked.")
         else:
-            print("❌ Account not found or not locked.")
+            print("Account not found or not locked.")
 
     def manager_menu(self):
         while True:
-            print("\n👨‍💼 Manager Menu")
+            print("\nManager Menu")
             print("1. Add Account")
             print("2. View All Accounts")
             print("3. View Transaction History")
@@ -197,14 +197,14 @@ class BankManagementSystem:
             elif choice == "4":
                 self.unlock_account()
             elif choice == "5":
-                print("🔴 Exiting Manager System.")
+                print("Exiting Manager System.")
                 break
             else:
-                print("❌ Invalid choice. Please try again.")
+                print("Invalid choice. Please try again.")
 
     def main_menu(self):
         while True:
-            print("\n🏦 Welcome to NUD Bank Management System")
+            print("\nWelcome to NUD Bank Management System")
             print("1. Create Account")
             print("2. Login")
             print("3. Exit")
@@ -215,10 +215,10 @@ class BankManagementSystem:
             elif choice == "2":
                 self.login_menu()
             elif choice == "3":
-                print("🔴 Exiting the system. Thank you for using NUD Bank!")
+                print("Exiting the system. Thank you for using NUD Bank!")
                 break
             else:
-                print("❌ Invalid choice. Please try again.")
+                print("nvalid choice. Please try again.")
 
 if __name__ == "__main__":
     bank_system = BankManagementSystem()
